@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://github.com/ansible/eda-server-operator.git//config/default?ref=42e9a8266d15bdcb0423066784a6ec6d1f64e8f1
+
+images:
+  - name: quay.io/ansible/eda-server
+    newName: quay.io/ansible/eda-server
+    digest: sha256:9a765a90ca6837cba0c4c4785610b4498ce559c7edfbfdc8a525073b269f2b90
+
+# Specify a custom namespace in which to install EDA
+namespace: eda

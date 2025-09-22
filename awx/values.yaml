@@ -1,0 +1,8 @@
+AWX:
+  enabled: true
+  spec:
+    service_type: LoadBalancer
+    loadbalancer_port: 8081
+    # extra_settings:
+    #   - setting: LANGUAGE_CODE
+    #     value: "en-us"
