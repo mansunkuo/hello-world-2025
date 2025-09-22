@@ -3,11 +3,12 @@
 A sample setup of AWX, Prometheus, Grafana, Grafana MCP, and Event-Driven Ansible on Docker Desktop for [Hello World Dev Conf 2025](https://hwdc.ithome.com.tw/2025/speaker-page/704)
 
 ## Essential Tools for k8s
+- [Docker Desktop](https://docs.docker.com/desktop/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
     - [kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
 - [helm](https://helm.sh/docs/intro/install/)
 - [Linux stress command With Examples](https://www.geeksforgeeks.org/linux-unix/linux-stress-command-with-examples/)
-
+- [uv](https://github.com/astral-sh/uv)
 
 ## AWX 
 - [AWX Operator Helm Chart](https://github.com/ansible-community/awx-operator-helm/)
@@ -93,3 +94,18 @@ kubectl apply -f eda/eda.yaml -n eda
 kubectl get secret my-eda-admin-password -n eda -o jsonpath="{.data.password}" | base64 --decode ; echo
 ```
 
+## Ansible
+
+```bash
+# Install globally
+uv tool install ansible-core
+
+# Create a new project directory structure
+ansible-runner init ansible-project
+
+# Run a playbook from the project
+ansible-runner run ansible-project -p hello_world.yml
+
+# Run with inventory
+ansible-runner run my-project -p my-playbook.yml -i inventory/hosts
+```
