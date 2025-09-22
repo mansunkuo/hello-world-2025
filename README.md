@@ -100,12 +100,6 @@ kubectl get secret my-eda-admin-password -n eda -o jsonpath="{.data.password}" |
 # Install globally
 uv tool install ansible-core
 
-# Create a new project directory structure
-ansible-runner init ansible-project
-
-# Run a playbook from the project
-ansible-runner run ansible-project -p hello_world.yml
-
-# Run with inventory
-ansible-runner run my-project -p my-playbook.yml -i inventory/hosts
+# Install EDA collection
+ansible-galaxy collection install ansible.eda
 ```
