@@ -95,6 +95,7 @@ kubectl get secret my-eda-admin-password -n eda -o jsonpath="{.data.password}" |
 ```
 
 ## Ansible
+- [Ansible Rulebook](https://ansible.readthedocs.io/projects/rulebook/en/latest/)
 
 ```bash
 # Install globally
@@ -102,4 +103,20 @@ uv tool install ansible-core
 
 # Install EDA collection
 ansible-galaxy collection install ansible.eda
+
+# Run local with Docker
+docker run -it --rm \
+  -v "$(pwd)":/workdir \
+  -w /workdir \
+  -p 5555:5555 \
+  quay.io/ansible/ansible-rulebook:latest \
+  ansible-rulebook \
+    -i inventories/local/hosts \
+    -r rulebooks/demo_webhook_rulebook.yml \
+    --verbose
+
+# Basic curl command to trigger the webhook
+curl -X POST http://localhost:5555/ \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello from curl"}'
 ```
