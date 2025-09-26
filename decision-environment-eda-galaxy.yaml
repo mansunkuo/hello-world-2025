@@ -1,0 +1,17 @@
+version: 3
+
+images:
+  base_image:
+    # https://quay.io/repository/ansible/ansible-rulebook?tab=tags
+    name: quay.io/ansible/ansible-rulebook:v1.2.0
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core
+  ansible_runner:
+    package_pip: ansible-runner
+  galaxy:
+    collections:
+      - ansible.eda
+  python_interpreter:
+    package_system: python311
