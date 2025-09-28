@@ -1,6 +1,6 @@
 # Hello World Conf 2025
 
-A sample setup of AWX, Prometheus, Grafana, Grafana MCP, and Event-Driven Ansible on Docker Desktop for [Hello World Dev Conf 2025](https://hwdc.ithome.com.tw/2025/speaker-page/704)
+A sample setup of AWX, Prometheus, Grafana, Grafana MCP, and Event-Driven Ansible Controller on Docker Desktop for [Hello World Dev Conf 2025](https://hwdc.ithome.com.tw/2025/speaker-page/704)
 
 ## Trigger Strategy
 ### AWX 
@@ -32,37 +32,7 @@ Rel(grafana, awx, "Triggers")
 @enduml
 ```
 
-### EDA
-In this strategy, Grafana alerts trigger EDA directly, without involving AWX.  
-
-- Prometheus scrapes metrics, and Grafana evaluates them.  
-- When an alert condition is met, Grafana sends the trigger to EDA.  
-- EDA processes the event using rulebooks and handles actions directly within EDA.  
-
-This model provides the flexibility of EDA’s event-driven engine, making it well-suited for lightweight automation without the overhead of AWX.  
-```plantuml
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-LAYOUT_WITH_LEGEND()
-
-' Define the systems
-System_Boundary(monitoring, "Monitoring"){
-    Container(prometheus, "Prometheus", "Time-series database", "Collects metrics from targets")
-    Container(grafana, "Grafana", "Dashboard", "Visualizes metrics from Prometheus")
-    Container(node_exporter, "Node Exporter", "Agent", "Collects host-level metrics")    
-}
-System(eda, "EDA", "Event-Driven Automation")
-
-' Define relationships
-Rel(prometheus, node_exporter, "Scrapes metrics from")
-Rel(grafana, prometheus, "Queries data from")
-Rel(grafana, eda, "Triggers")
-
-@enduml
-```
-
-### EDA with AWX 
+### EDA Controller with AWX 
 In this combined strategy, Grafana alerts trigger EDA, and EDA orchestrates AWX.
 - Prometheus scrapes metrics, and Grafana evaluates them.
 - When an alert condition is met, Grafana sends the trigger to EDA.
@@ -82,10 +52,41 @@ System_Boundary(monitoring, "Monitoring"){
     Container(node_exporter, "Node Exporter", "Agent", "Collects host-level metrics")    
 }
 System(awx, "AWX", "Automation Platform")
-System(eda, "EDA", "Event-Driven Automation")
+System(eda, "EDA Controller", "Event-Driven Ansible Controller")
 
 ' Define relationships
 Rel(eda, awx, "Executes playbooks on")
+Rel(prometheus, node_exporter, "Scrapes metrics from")
+Rel(grafana, prometheus, "Queries data from")
+Rel(grafana, eda, "Triggers")
+
+@enduml
+```
+
+### EDA (Controller) Only
+In this strategy, Grafana alerts trigger EDA directly, without involving AWX.
+
+- Prometheus scrapes metrics, and Grafana evaluates them.  
+- When an alert condition is met, Grafana sends the trigger to EDA.  
+- EDA processes the event using rulebooks with a decision environment that includes a built-in inventory.
+
+Although this model works technically, the EDA Controller UI does not provide built-in inventory configuration (See [ref](https://forum.ansible.com/t/eda-ui-how-to-set-inventory/2926/5)). For lightweight use cases, it is often simpler to use Ansible Rulebook directly.
+
+```plantuml
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+' Define the systems
+System_Boundary(monitoring, "Monitoring"){
+    Container(prometheus, "Prometheus", "Time-series database", "Collects metrics from targets")
+    Container(grafana, "Grafana", "Dashboard", "Visualizes metrics from Prometheus")
+    Container(node_exporter, "Node Exporter", "Agent", "Collects host-level metrics")    
+}
+System(eda, "EDA (Controller)", "Event-Driven Ansible (Controller)")
+
+' Define relationships
 Rel(prometheus, node_exporter, "Scrapes metrics from")
 Rel(grafana, prometheus, "Queries data from")
 Rel(grafana, eda, "Triggers")
